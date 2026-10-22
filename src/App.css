@@ -1,0 +1,54 @@
+.App {
+  text-align: center;
+}
+.navbarBrand{ 
+  text-decoration-line: none;
+}
+/* .btnContainer{
+  flex-direction: row;
+  gap: 10px;
+  display: flex;
+  justify-content: baseline;
+}
+.btn{
+  margin: 0.5rem;
+  width: 300px;
+  text-align: center;
+} */
+/* Container for the buttons */
+.button-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* Spaces the buttons evenly */
+}
+
+/* Base style for all action buttons */
+.action-btn {
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Light Mode Button Colors */
+.btn-light-mode {
+  background-color: #4f46e5; /* Indigo 600 */
+  color: #ffffff;
+}
+
+.btn-light-mode:hover {
+  background-color: #4338ca; /* Darker Indigo on hover */
+  color: #ffffff;
+}
+
+/* Dark Mode Button Colors */
+.btn-dark-mode {
+  background-color: #6366f1; /* Indigo 500 */
+  color: #ffffff;
+}
+
+.btn-dark-mode:hover {
+  background-color: #4f46e5; /* Darker Indigo on hover */
+  color: #ffffff;
+}
