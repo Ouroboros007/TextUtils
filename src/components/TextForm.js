@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import PropTypes from 'prop-types';
 
 export default function TextForm(props){
-    // 1. Define our modern color palette
+    const [text, setText] = useState('Enter text here');
     const isDark = props.mode === 'dark';
     const theme = {
         text: isDark ? '#e2e8f0' : '#1e293b',             // Slate-200 (Dark) / Slate-800 (Light)
@@ -56,7 +56,34 @@ const handleClearClick =()=>{
     const handleOnChange =(event)=>{
         setText(event.target.value)
     }
-    const [text, setText] = useState('Enter text here');
+    const query = props.searchQuery ? props.searchQuery.trim() : '';
+  const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const matchCount = query
+    ? (text.match(new RegExp(escapedQuery, 'gi')) || []).length
+    : 0;
+
+  const getHighlightedText = () => {
+    if (!query) return text;
+    const parts = text.split(new RegExp(`(${escapedQuery})`, 'gi'));
+    return parts.map((part, i) =>
+      part.toLowerCase() === query.toLowerCase() ? (
+        <mark
+          key={i}
+          style={{
+            backgroundColor: '#facc15',
+            color: '#000',
+            padding: '0 2px',
+            borderRadius: '3px',
+          }}
+        >
+          {part}
+        </mark>
+      ) : (
+        part
+      )
+    );
+  };
+
     return(
         <div className="form-field" style={{ color: theme.text }}>
             <h1><b>{props.heading}</b></h1>
@@ -71,14 +98,14 @@ const handleClearClick =()=>{
             </div>
 {/* Replaced inline styles with the button-container class from App.css */}
                 <div className="container mb-4 button-container">
-                    <button className={`btn action-btn ${btnClass}`} onClick={handleUpClick}>Uppercase</button>
-                    <button className={`btn action-btn ${btnClass}`} onClick={handleLowClick}>Lowercase</button>
-                    <button className={`btn action-btn ${btnClass}`} onClick={handleTitleCase}>Title Case</button>
-                    <button className={`btn action-btn ${btnClass}`} onClick={handleReverseText}>Reverse Text</button>
-                    <button className={`btn action-btn ${btnClass}`} onClick={handleCopyClick}>Copy Text</button>
-                    <button className={`btn action-btn ${btnClass}`} onClick={handleExtraSpaces}>Remove Extra Spaces</button>
-                    <button className={`btn action-btn ${btnClass}`} onClick={handleSpeak}>Speak 🔊</button>
-                    <button className={`btn action-btn ${btnClass}`} onClick={handleClearClick}>Clear</button>
+                    <button disabled={text.length === 0 } className={`btn action-btn ${btnClass}`} onClick={handleUpClick}>Uppercase</button>
+                    <button disabled={text.length === 0 } className={`btn action-btn ${btnClass}`} onClick={handleLowClick}>Lowercase</button>
+                    <button disabled={text.length === 0 } className={`btn action-btn ${btnClass}`} onClick={handleTitleCase}>Title Case</button>
+                    <button disabled={text.length === 0 } className={`btn action-btn ${btnClass}`} onClick={handleReverseText}>Reverse Text</button>
+                    <button disabled={text.length === 0 } className={`btn action-btn ${btnClass}`} onClick={handleCopyClick}>Copy Text</button>
+                    <button disabled={text.length === 0 } className={`btn action-btn ${btnClass}`} onClick={handleExtraSpaces}>Remove Extra Spaces</button>
+                    <button disabled={text.length === 0 } className={`btn action-btn ${btnClass}`} onClick={handleSpeak}>Speak 🔊</button>
+                    <button disabled={text.length === 0 } className={`btn action-btn ${btnClass}`} onClick={handleClearClick}>Clear</button>
                 </div>
             <div className="containter mb-3">
                 <h2>Summary :</h2>
@@ -92,12 +119,19 @@ const handleClearClick =()=>{
                     </p>
                 <h2>Preview</h2>
                 <p style={{ 
-                    padding: '15px', 
-                    backgroundColor: isDark ? '#0f172a' : '#f8fafc', // Slightly darker/lighter background for preview box
-                    borderRadius: '8px',
-                    border: `1px solid ${theme.textAreaBorder}`
-                }}>{text.length>0 ? text : "Enter text in above area to Preview here"}</p>
+                    padding: '15px',
+            backgroundColor: isDark ? '#0f172a' : '#f8fafc',
+            borderRadius: '8px',
+            border: `1px solid ${theme.textAreaBorder}`,
+            whiteSpace: 'pre-wrap',
+                }}>{text.length>0 ? getHighlightedText() : "Enter text in above area to Preview here"}</p>
             </div>     
         </div>
-    )
+    );
 }
+TextForm.propTypes = {
+  heading: PropTypes.string.isRequired,
+  mode: PropTypes.oneOf(['light', 'dark']),
+  showAlert: PropTypes.func.isRequired,
+  searchQuery: PropTypes.string,
+};
